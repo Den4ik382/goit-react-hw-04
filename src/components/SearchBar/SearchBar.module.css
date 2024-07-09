@@ -1,0 +1,16 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(73, 73, 166);
+  height: 50px;
+}
+
+.input {
+  height: 30px;
+  margin-right: 20px;
+  width: 220px;
+  border-radius: 5px;
+}
+.btn {
+}
