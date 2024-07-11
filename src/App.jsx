@@ -1,11 +1,14 @@
-import toast, { Toaster } from "react-hot-toast";
-import { Hourglass } from "react-loader-spinner";
-import axios from "axios";
+import { Toaster } from "react-hot-toast";
 import { useEffect, useState } from "react";
-import css from "./App.module.css";
 import ImageModal from "./components/ImageModal/ImageModal";
 import SearchBar from "./components/SearchBar/SearchBar";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
+import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn";
+import Loader from "./components/Loader/Loader";
+import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
+import NotFound from "./components/NotFound/NotFound";
+import { fetchImg, notify } from "./services/Api";
+
 export default function App() {
   const [img, setImg] = useState([]);
   const [page, setPage] = useState(1);
@@ -14,15 +17,7 @@ export default function App() {
   const [error, setError] = useState(false);
   const [search, setSearch] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  axios.defaults.baseURL = "https://api.unsplash.com/";
 
-  const notify = () =>
-    toast("Text must be entered to search for images.", {
-      style: {
-        border: "1px solid black",
-        color: "red",
-      },
-    });
   const onSubmit = (searchQuery) => {
     if (searchQuery.trim() === "") {
       notify();
@@ -40,19 +35,6 @@ export default function App() {
     if (query === "") {
       return;
     }
-
-    const fetchImg = async (number, searchQuery) => {
-      // try {
-      const response = await axios.get("search/photos", {
-        params: {
-          client_id: "15wgyaekuwfQchIVoE3QhgA-HRNMHb0mlcQDMiWXYQY",
-          page: number,
-          per_page: 12,
-          query: searchQuery,
-        },
-      });
-      return response.data.results;
-    };
 
     const getImage = async () => {
       try {
@@ -87,29 +69,14 @@ export default function App() {
   return (
     <div>
       <SearchBar onSubmit={onSubmit} />
-      {loader === true && (
-        <Hourglass
-          visible={true}
-          height="80"
-          width="80"
-          ariaLabel="hourglass-loading"
-          wrapperStyle={{}}
-          wrapperClass=""
-          colors={["#306cce", "#72a1ed"]}
-        />
-      )}
-      {error === true && (
-        <p>Oops! There was an error, please reload this page!</p>
-      )}
-      {search === true && <h1>Sorry, nothing was found</h1>}
+      {loader === true && <Loader />}
+      {error === true && <ErrorMessage />}
+      {search === true && <NotFound />}
       {img.length > 0 && (
         <ImageGallery img={img} handleImageClick={handleImageClick} />
       )}
-      {img.length > 0 && !loader && (
-        <button onClick={handlePage} className={css.btnLoad}>
-          Load more
-        </button>
-      )}
+
+      {img.length > 0 && !loader && <LoadMoreBtn handlePage={handlePage} />}
       <ImageModal
         isOpen={!!selectedImage}
         onRequestClose={handleCloseModal}

@@ -1,0 +1,8 @@
+.btnLoad {
+  display: block;
+  margin: auto;
+  width: 100px;
+  height: 30px;
+  border-radius: 10px;
+  border: none;
+}
